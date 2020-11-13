@@ -56,10 +56,10 @@ type JSONResults struct {
 }
 
 func main() {
-
 	var (
 		broker   = flag.String("broker", "tcp://localhost:1883", "MQTT broker endpoint as scheme://host:port")
 		topic    = flag.String("topic", "/test", "MQTT topic for outgoing messages")
+		prefix   = flag.String("prefix", "", "MQTT client prefix prefix-id")
 		username = flag.String("username", "", "MQTT username (empty if auth disabled)")
 		password = flag.String("password", "", "MQTT password (empty if auth disabled)")
 		qos      = flag.Int("qos", 1, "QoS for published messages")
@@ -86,15 +86,16 @@ func main() {
 			log.Println("Starting client ", i)
 		}
 		c := &Client{
-			ID:         i,
-			BrokerURL:  *broker,
-			BrokerUser: *username,
-			BrokerPass: *password,
-			MsgTopic:   *topic,
-			MsgSize:    *size,
-			MsgCount:   *count,
-			MsgQoS:     byte(*qos),
-			Quiet:      *quiet,
+			ID:           i,
+			ClientPrefix: *prefix,
+			BrokerURL:    *broker,
+			BrokerUser:   *username,
+			BrokerPass:   *password,
+			MsgTopic:     *topic,
+			MsgSize:      *size,
+			MsgCount:     *count,
+			MsgQoS:       byte(*qos),
+			Quiet:        *quiet,
 		}
 		go c.Run(resCh)
 	}

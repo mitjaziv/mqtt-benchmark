@@ -4,23 +4,22 @@ import (
 	"fmt"
 	"log"
 	"time"
-)
 
-import (
 	"github.com/GaryBoone/GoStats/stats"
 	mqtt "github.com/eclipse/paho.mqtt.golang"
 )
 
 type Client struct {
-	ID         int
-	BrokerURL  string
-	BrokerUser string
-	BrokerPass string
-	MsgTopic   string
-	MsgSize    int
-	MsgCount   int
-	MsgQoS     byte
-	Quiet      bool
+	ID           int
+	ClientPrefix string
+	BrokerURL    string
+	BrokerUser   string
+	BrokerPass   string
+	MsgTopic     string
+	MsgSize      int
+	MsgCount     int
+	MsgQoS       byte
+	Quiet        bool
 }
 
 func (c *Client) Run(res chan *RunResults) {
@@ -119,9 +118,15 @@ func (c *Client) pubMessages(in, out chan *Message, doneGen, donePub chan bool) 
 		}
 	}
 
+	// Generate predictable client ID.
+	clientID := fmt.Sprintf("mqtt-benchmark-%v-%v", time.Now().Format(time.RFC3339Nano), c.ID)
+	if c.ClientPrefix != "" {
+		clientID = fmt.Sprintf("%s-%v", c.ClientPrefix, c.ID)
+	}
+
 	opts := mqtt.NewClientOptions().
 		AddBroker(c.BrokerURL).
-		SetClientID(fmt.Sprintf("mqtt-benchmark-%v-%v", time.Now().Format(time.RFC3339Nano), c.ID)).
+		SetClientID(clientID).
 		SetCleanSession(true).
 		SetAutoReconnect(true).
 		SetOnConnectHandler(onConnected).

@@ -19,6 +19,7 @@ Usage of mqtt-benchmark:
   -count=100: Number of messages to send per client
   -format="text": Output format: text|json
   -password="": MQTT password (empty if auth disabled)
+  -prefix="": MQTT client prefix prefix-id
   -qos=1: QoS for published messages
   -quiet=false : Suppress logs while running (except errors and the result)
   -size=100: Size of the messages payload (bytes)
